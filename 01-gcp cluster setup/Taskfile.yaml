@@ -1,9 +1,23 @@
-gcp:01-init-cli:
+version: "3"
+
+env:
+  CLUSTER_NAME: pfc-tracker-system
+  GCP_REGION: southamerica-east1
+  GCP_ZONE: southamerica-east1-a
+  # Set default gum style options
+  BORDER: double
+  BORDER_FOREGROUND: "212"
+  PADDING: "1 1"
+  MARGIN: "1 1"
+
+tasks:
+  01-init-cli:
+    desc: "Authenticate and configure the gcloud CLI"
     cmds:
       - gcloud init
-    desc: "Authenticate and configure the gcloud CLI"
 
-  gcp:02-enable-apis:
+  02-enable-apis:
+    desc: "Enable necessary APIs"
     cmds:
       - |
         gcloud services enable \
@@ -14,32 +28,31 @@ gcp:01-init-cli:
           secretmanager.googleapis.com \
           servicemanagement.googleapis.com \
           serviceusage.googleapis.com
-    desc: "Enable necessary APIs"
 
-  gcp:03-set-region-and-zone:
+  03-set-region-and-zone:
+    desc: "Set default region and zone"
     cmds:
       - gcloud config set compute/region ${GCP_REGION}
       - gcloud config set compute/zone ${GCP_ZONE}
-    desc: "Set default region and zone"
 
-  gcp:04-create-vpc:
+  04-create-vpc:
+    desc: "Create VPC"
     cmds:
       - gcloud compute networks create ${CLUSTER_NAME} --subnet-mode=custom
-    desc: "Create VPC"
 
-  gcp:05-create-subnet:
+  05-create-subnet:
+    desc: "Create subnet"
     cmds:
       - |
         gcloud compute networks subnets create subnet-1 \
           --network=${CLUSTER_NAME} \
           --region=${GCP_REGION} \
           --range=10.0.0.0/20
-    desc: "Create subnet"
 
-  gcp:06-create-cluster:
+  06-create-cluster:
     desc: "Create GKE cluster"
     vars:
-      GCP_PROJECT_ID: kubernetes-course-424917
+      GCP_PROJECT_ID: angular-vector-448122-q6
     cmds:
       - |
         gcloud container clusters create ${CLUSTER_NAME} \
@@ -51,23 +64,23 @@ gcp:01-init-cli:
           --gateway-api=standard \
           --workload-pool={{.GCP_PROJECT_ID}}.svc.id.goog
 
-  gcp:07-create-all:
+  07-create-all:
+    desc: "Create the GCP network, subnet, firewall rules, and cluster in sequence"
     cmds:
-      - task: gcp:02-enable-apis
-      - task: gcp:03-set-region-and-zone
-      - task: gcp:04-create-vpc
-      - task: gcp:05-create-subnet
-      - task: gcp:06-create-cluster
-    desc: Create the GCP network, subnet, firewall rules, and cluster in sequence
+      - task: 02-enable-apis
+      - task: 03-set-region-and-zone
+      - task: 04-create-vpc
+      - task: 05-create-subnet
+      - task: 06-create-cluster
 
-  gcp:09-clean-up:
+  08-connect-to-cluster:
+    desc: "Connect to the GKE cluster"
+    cmds:
+      - gcloud container clusters get-credentials ${CLUSTER_NAME} --zone ${GCP_ZONE}
+
+  09-clean-up:
+    desc: "Delete the GCP network, subnet, firewall rules, and cluster in reverse sequence"
     cmds:
       - gcloud container clusters delete ${CLUSTER_NAME} --zone ${GCP_ZONE} --quiet
       - gcloud compute networks subnets delete subnet-1 --region=${GCP_REGION} --quiet
       - gcloud compute networks delete ${CLUSTER_NAME} --quiet
-    desc: Delete the GCP network, subnet, firewall rules, and cluster in reverse sequence
-
-  gcp:08-connect-to-cluster:
-    cmds:
-      - gcloud container clusters get-credentials ${CLUSTER_NAME} --zone ${GCP_ZONE}
-    desc: "Connect to the GKE cluster"
