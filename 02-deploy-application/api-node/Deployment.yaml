@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-node
+  namespace: tracking-system
+  labels:
+    app: api-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-node
+  template:
+    metadata:
+      labels:
+        app: api-node
+    spec:
+      containers:
+        - name: api-node
+          image: southamerica-east1-docker.pkg.dev/angular-vector-448122-q6/pfc-tracking-system/tracking-system:dev
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            limits:
+              memory: "963Mi"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault

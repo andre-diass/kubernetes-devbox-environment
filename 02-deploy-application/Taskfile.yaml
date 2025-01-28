@@ -1,0 +1,19 @@
+version: "3"
+
+env:
+  # Set default gum style options
+  BORDER: double
+  BORDER_FOREGROUND: "212"
+  PADDING: "1 1"
+  MARGIN: "1 1"
+
+includes:
+  common:
+    taskfile: ./common/Taskfile.yaml
+    dir: ./common
+
+tasks:
+  api-node:apply:
+    desc: "Apply kubernetes resource manifests for api-node application"
+    cmds:
+      - "kubectl apply -f ./api-node"
