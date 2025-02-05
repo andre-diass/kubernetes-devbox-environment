@@ -15,7 +15,6 @@ tasks:
     desc: "Authenticate and configure the gcloud CLI"
     cmds:
       - gcloud init
-
   02-enable-apis:
     desc: "Enable necessary APIs"
     cmds:
@@ -27,7 +26,8 @@ tasks:
           iam.googleapis.com \
           secretmanager.googleapis.com \
           servicemanagement.googleapis.com \
-          serviceusage.googleapis.com
+          serviceusage.googleapis.com \
+          artifactregistry.googleapis.com
 
   03-set-region-and-zone:
     desc: "Set default region and zone"
