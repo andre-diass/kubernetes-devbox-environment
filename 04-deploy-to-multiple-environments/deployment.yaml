@@ -1,0 +1,13 @@
+#This tells Kluctl to load an environment-specific configuration file based on the args.environment value.
+vars:
+  - file: config/{{ args.environment }}.yaml
+
+deployments:
+  - path: namespaces
+  - barrier: true
+  - include: third-party
+  - barrier: true
+  - include: services
+
+commonLabels:
+  tracking-system.app: "prod-and-dev"

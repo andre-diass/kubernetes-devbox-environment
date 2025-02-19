@@ -2,13 +2,13 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: api-node
-  namespace: tracking-system
+  namespace: tracking-system-{{ args.namespace }}
 spec:
   entryPoints:
     - web
   routes:
     - kind: Rule
-      match: Host(`tracking-system.app`) && PathPrefix(`/api/node`)
+      match: Host(`tracking-system.app`) && PathPrefix(`/api/node/{{ args.environment }}`)
       middlewares:
         - name: strip-api-prefixes
       services:
