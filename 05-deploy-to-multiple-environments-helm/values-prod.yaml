@@ -1,0 +1,5 @@
+namespace: prod
+environment: prod
+
+image:
+  tag: 1.0.5

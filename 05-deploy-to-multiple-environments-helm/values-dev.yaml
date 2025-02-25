@@ -1,0 +1,5 @@
+namespace: dev
+environment: dev
+
+image:
+  tag: 1.0.5

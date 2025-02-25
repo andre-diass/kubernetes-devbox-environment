@@ -1,0 +1,37 @@
+version: "3"
+
+tasks:
+  template-default:
+    cmds:
+      - helm template ./ | yq
+    desc: "Render chart yaml with default values"
+
+  template-dev:
+    cmds:
+      - helm template ./ --values ./values-dev.yaml  | yq
+    desc: "Render chart yaml with dev values file"
+
+  template-prod:
+    cmds:
+      - helm template ./ --values ./values.prod.yaml  | yq
+    desc: "Render chart yaml with prod values file"
+
+  deploy-dev:
+    cmds:
+      - helm upgrade --install tracking-system ./ --values ./values-dev.yaml
+
+  package:
+    cmds:
+      - helm package ./
+    desc: "Bundle helm chart as a .tgz OCI image"
+
+  push:
+    cmds:
+      - helm push api-node-0.1.0.tgz oci://registry-1.docker.io/<path>
+    desc: "Push the helm chart to an oci registry"
+
+  build-push:
+    cmds:
+      - task: build
+      - task: push
+    desc: "Build & Push the helm chart to an oci registry"
