@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tracking-system-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/andre-diass/kubernetes-devbox-environment.git"
+    targetRevision: HEAD
+    path: 05-deploy-to-multiple-environments-helm
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tracking-system-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
