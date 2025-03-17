@@ -8,9 +8,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: Host(`tracking-system.app`) && PathPrefix(`/front/{{ .Values.environment }}`)
-      middlewares:
-        - name: strip-api-prefixes-front
+      match: Host(`tracking-system.app`)
       services:
         - kind: Service
           name: front-tracking-system

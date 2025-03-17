@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: front-tracking-system
-          image:
+          image: southamerica-east1-docker.pkg.dev/angular-vector-448122-q6/pfc-tracking-system/nextjs-react-tracking-system-app:dev
           ports:
             - containerPort: 4000
               protocol: TCP
