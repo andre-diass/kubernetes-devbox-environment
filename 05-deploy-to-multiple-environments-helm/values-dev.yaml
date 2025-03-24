@@ -3,3 +3,23 @@ environment: dev
 
 image:
   tag: 1.0.5
+
+traefik:
+  additionalArguments:
+    - "--entrypoints.websecure.address=:443"
+    - "--certificatesresolvers.le.acme.email=andredsf@outlook.com"
+    - "--certificatesresolvers.le.acme.storage=/data/acme.json"
+    - "--certificatesresolvers.le.acme.tlschallenge=true"
+
+  ingressRoute:
+    dashboard:
+      enabled: false
+
+  service:
+    enabled: true
+
+  providers:
+    kubernetesCRD:
+      enabled: true
+    kubernetesIngress:
+      enabled: true

@@ -13,4 +13,5 @@ spec:
         - kind: Service
           name: front-tracking-system
           port: 4000
-          scheme: http
+  # tls:
+  #   secretName: le
