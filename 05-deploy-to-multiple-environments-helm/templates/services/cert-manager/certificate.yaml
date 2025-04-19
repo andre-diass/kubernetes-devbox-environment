@@ -1,12 +1,12 @@
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: certificate-tracking-system
-  namespace: cert-manager
-spec:
-  secretName: certificate-secret
-  issuerRef:
-    name: cloudflare-clusterissuer
-    kind: ClusterIssuer
-  dnsNames:
-    - tracking-system.app
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: certificate-tracking-system
+#   namespace: cert-manager
+# spec:
+#   secretName: certificate-secret
+#   issuerRef:
+#     name: cloudflare-clusterissuer
+#     kind: ClusterIssuer
+#   dnsNames:
+#     - tracking-system.app

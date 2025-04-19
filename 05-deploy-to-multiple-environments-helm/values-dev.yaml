@@ -2,14 +2,14 @@ namespace: dev
 environment: dev
 
 image:
-  tag: 1.0.5
+  tag: 1.0.19
 
 traefik:
   additionalArguments:
-    - "--entrypoints.websecure.address=:443"
-    - "--certificatesresolvers.le.acme.email=andredsf@outlook.com"
-    - "--certificatesresolvers.le.acme.storage=/data/acme.json"
-    - "--certificatesresolvers.le.acme.tlschallenge=true"
+  #   - "--entrypoints.websecure.address=:443"
+  #   - "--certificatesresolvers.le.acme.email=andredsf@outlook.com"
+  #   - "--certificatesresolvers.le.acme.storage=/data/acme.json"
+  #   - "--certificatesresolvers.le.acme.tlschallenge=true"
 
   ingressRoute:
     dashboard:
@@ -23,3 +23,147 @@ traefik:
       enabled: true
     kubernetesIngress:
       enabled: true
+
+kube-prometheus-stack:
+  enabled: true
+  fullnameOverride: prometheus
+  defaultRules:
+    create: true
+    rules:
+      alertmanager: true
+      etcd: true
+      configReloaders: true
+      general: true
+      k8s: true
+      kubeApiserverAvailability: true
+      kubeApiserverBurnrate: true
+      kubeApiserverHistogram: true
+      kubeApiserverSlos: true
+      kubelet: true
+      kubeProxy: true
+      kubePrometheusGeneral: true
+      kubePrometheusNodeRecording: true
+      kubernetesApps: true
+      kubernetesResources: true
+      kubernetesStorage: true
+      kubernetesSystem: true
+      kubeScheduler: true
+      kubeStateMetrics: true
+      network: true
+      node: true
+      nodeExporterAlerting: true
+      nodeExporterRecording: true
+      prometheus: true
+      prometheusOperator: true
+
+  alertmanager:
+    fullnameOverride: alertmanager
+    enabled: true
+    ingress:
+      enabled: false
+
+  grafana:
+    enabled: true
+    fullnameOverride: grafana
+    forceDeployDatasources: false
+    forceDeployDashboards: false
+    defaultDashboardsEnabled: true
+    defaultDashboardsTimezone: utc
+    serviceMonitor:
+      enabled: true
+
+  kubeApiServer:
+    enabled: true
+
+  kubelet:
+    enabled: true
+    serviceMonitor:
+      metricRelabelings:
+        - action: replace
+          sourceLabels:
+            - node
+          targetLabel: instance
+
+  coreDns:
+    enabled: true
+
+  kubeDns:
+    enabled: false
+
+  kubeStateMetrics:
+    enabled: true
+
+  kube-state-metrics:
+    fullnameOverride: kube-state-metrics
+    selfMonitor:
+      enabled: true
+    prometheus:
+      monitor:
+        enabled: true
+        relabelings:
+          - action: replace
+            regex: (.*)
+            replacement: $1
+            sourceLabels:
+              - __meta_kubernetes_pod_node_name
+            targetLabel: kubernetes_node
+
+  nodeExporter:
+    enabled: true
+    serviceMonitor:
+      relabelings:
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          sourceLabels:
+            - __meta_kubernetes_pod_node_name
+          targetLabel: kubernetes_node
+
+  prometheus-node-exporter:
+    fullnameOverride: node-exporter
+    podLabels:
+      jobLabel: node-exporter
+    service:
+      portName: http-metrics
+    prometheus:
+      monitor:
+        enabled: true
+        relabelings:
+          - action: replace
+            regex: (.*)
+            replacement: $1
+            sourceLabels:
+              - __meta_kubernetes_pod_node_name
+            targetLabel: kubernetes_node
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 250m
+      limits:
+        memory: 2048Mi
+
+  prometheusOperator:
+    enabled: true
+    prometheusConfigReloader:
+      resources:
+        requests:
+          cpu: 200m
+          memory: 50Mi
+        limits:
+          memory: 100Mi
+
+  prometheusSpec:
+    replicas: 1
+    replicaExternalLabelName: "replica"
+    ruleSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    retention: 6h
+    enableAdminAPI: true
+    walCompression: true
+    scrapeInterval: 30s
+    evaluationInterval: 30s
+
+  thanosRuler:
+    enabled: false
